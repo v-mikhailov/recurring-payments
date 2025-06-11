@@ -1,2 +1,48 @@
-node_modules
+# === GLOBAL ===
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and IDE
 .DS_Store
+Thumbs.db
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === NODE / MONOREPO ===
+node_modules/
+
+# === FRONTEND: Vite (client/) ===
+client/dist/
+client/node_modules/
+client/.env
+client/.vite/
+
+# Optional: Vite preview build
+client/.vite-cache/
+
+# VS Code settings (optional)
+client/.vscode/*
+!client/.vscode/extensions.json
+
+# === BACKEND: Express + TS (server/) ===
+server/dist/
+server/node_modules/
+server/.env
+server/*.local
+
+# VS Code settings (optional)
+server/.vscode/*
+!server/.vscode/extensions.json
+
+# === ENVIRONMENT ===
+.env
+.env.local
+.env.*.local
