@@ -1,0 +1,25 @@
+.base {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  row-gap: 5px;
+  margin-bottom: 10px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.input {
+  height: 25px;
+}
+
+
+.submit-button {
+  margin-top: 20px;
+}
