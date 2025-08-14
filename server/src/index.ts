@@ -1,16 +1,27 @@
-import express from 'express';
-const app = express();
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import app from './app';
+import { logger } from './utils/logger';
 
-const PORT = process.env.PORT || 3000;
+dotenv.config();
+const PORT = process.env.PORT;
+const MONGO_URI = process.env.MONGO_URI;
 
-app.get('/', (_req, res) => {
-  res.send('Hello, World!');
-})
+if (!MONGO_URI) {
+  console.error('MONGO_URI environment variable is required');
+  process.exit(1);
+}
 
-app.get('/api/v1/ping', (_req, res) => {
-  res.json({message: 'Hey hey hye, sweetie!'});
-})
 
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    logger.info('Connected to MongoDB');
+  })
+  .catch((err) => {
+    logger.error('Failed to connect to MongoDB:', err);
+  })
+ 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  logger.info(`Server is running on http://localhost:${PORT}`);
 })
