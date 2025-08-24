@@ -1,9 +1,20 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import { paymentShema } from '../shemas/payment.shema';
 import { validate } from '../middlewares/validate';
 import { PaymentModel } from '../models/payment';
 
 export const paymentRouter = Router();
+
+// type UpdatePaymentPayload = {
+//   title?: string;
+//   amount?: {
+//     value?: number;
+//     currency?: 'USD' | 'EUR' | 'RUB' | 'GBP' | 'ILS';
+//     frequency?: 'day' | 'week' | 'month' | 'year';
+//   };
+//   paymentDate?: string | Date;
+//   notes?: string | null;
+// };
 
 // get all payments
 paymentRouter.get('/', async (_req, res) => {
@@ -35,7 +46,24 @@ paymentRouter.get('/:id', async (req, res) => {
 });
 
 // delete payment
-// update payment
+paymentRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const payment = await PaymentModel.findByIdAndDelete(id);
+    if (payment) {
+      res.status(200).json({message: 'Payment deleted successfully'})
+    } else {
+      res.status(404).json({error: 'Payment not found'})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  };
+});
+
+// TODO update payment
+// paymentRouter.patch('/:id', async (req, res) => {
+// });
 
 // post payment
 paymentRouter.post('/', validate(paymentShema), async (req, res) => {
