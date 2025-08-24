@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import styles from './Layout.module.css';
+import styles from './layout.module.css';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,9 +8,7 @@ interface LayoutProps {
 export const Layout = ({ children }: LayoutProps) => {
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        {children}
-      </main>
+      {children}
     </div>
   );
 };

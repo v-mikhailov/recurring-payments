@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { LoginForm } from '../features/auth/LoginForm';
+import { LoginForm } from '../components/forms/loginForm/LoginForm';
 import { Link } from 'react-router-dom';
+
 export const LoginPage = () => {
 
   const [message, setMessage] = useState('');
@@ -13,7 +14,7 @@ export const LoginPage = () => {
   }) 
 
   return (
-    <div>
+    <main>
       <h1>PayTrack</h1>
       <p>
         Log in to manage your recurring payments effortlessly.
@@ -24,7 +25,12 @@ export const LoginPage = () => {
           Sign Up
         </Link>
       </p>
+      <p> Temporary access without registration {' '}
+        <Link to="/dashboard">
+          Go to Dashboard
+        </Link>
+      </p>
       <p>Message from the backend: {message}</p>
-    </div>
+    </main>
   )
 }
