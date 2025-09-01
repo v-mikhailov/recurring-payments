@@ -7,8 +7,8 @@ interface DashboardLayout {
 
 export const DashboardLayout = ({ children }: DashboardLayout) => {
   return (
-    <main className={styles.main}>
+    <div className={styles.container}>
       {children}
-    </main>
+    </div>
   );
 };

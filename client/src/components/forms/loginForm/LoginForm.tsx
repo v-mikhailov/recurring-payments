@@ -1,5 +1,5 @@
 import { useId, useState} from 'react';
-import styles from './LoginForm.module.css';
+import styles from './loginForm.module.css';
 
 export const LoginForm = () => {
   const formId = useId();
@@ -24,7 +24,7 @@ export const LoginForm = () => {
   return (
     <form className={styles.base} onSubmit={handleSubmit}>
       <div className={styles['form-group']}>
-        <label htmlFor={`${formId}-email`}>Username:</label>
+        <label htmlFor={`${formId}-login`}>Username:</label>
         <input 
           className={styles.input} 
           id={`${formId}-login`} 
@@ -35,7 +35,7 @@ export const LoginForm = () => {
         />
       </div>
       <div className={styles['form-group']}>
-        <label htmlFor={`${formId}-pasword`}>Password:</label>
+        <label htmlFor={`${formId}-password`}>Password:</label>
         <input 
           className={styles.input} 
           id={`${formId}-password`} 

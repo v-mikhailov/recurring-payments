@@ -25,6 +25,12 @@
 
     "noImplicitAny": true,  
     "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "src/pages/RegisterPage.tsx"]
 }

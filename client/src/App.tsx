@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { Layout } from './components/ui/layouts/layout';
-import { AuthLayout } from './components/ui/layouts/authLayout/AuthLayout';
-import { DashboardLayout } from './components/ui/layouts/dashboardLayout/DashboardLayout';
+import { Layout } from './components/layout/layout';
+import { DashboardLayout } from './components/layout/dashboardLayout/DashboardLayout';
+import { AuthLayout } from './components/layout/authLayout/AuthLayout';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import styles from './authLayout.module.css';
+import styles from './authLayout.module.css'
 
 interface AuthLayout {
   children: ReactNode;
@@ -7,8 +7,10 @@ interface AuthLayout {
 
 export const AuthLayout = ({ children }: AuthLayout) => {
   return (
-    <main className={styles.main}>
-      {children}
-    </main>
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        {children}
+      </div>
+    </div>
   );
 };

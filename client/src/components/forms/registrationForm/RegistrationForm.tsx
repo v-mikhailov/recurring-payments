@@ -1,5 +1,5 @@
 import { useId, useState} from 'react';
-import styles from './RegistrationForm.module.css';
+import styles from './registrationFrom.module.css';
 
 export const RegistrationForm = () => {
   const formId = useId();
