@@ -1,5 +1,18 @@
 .header {
   background-color: #ffffff;
-  padding: 16px;
+  padding: 18px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.action-bttns {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.dialog-content {
+  background-color: #ffffff
 }

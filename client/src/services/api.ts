@@ -16,7 +16,7 @@ export class ApiError extends Error {
 
 
 class ApiService {
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'http://localhost:3000/api/v1';
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const config: RequestInit = {
@@ -27,8 +27,7 @@ class ApiService {
       ...options,
     }
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, config)
-      
+      const response = await fetch(`${this.baseUrl}${endpoint}`, config) 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
 
@@ -55,6 +54,13 @@ class ApiService {
   get<T>(endpoint: string, params?: Record<string, string>) {
     const url = params ? `${endpoint}?${new URLSearchParams(params)}` : endpoint;
     return this.request<T>(url);
+  }
+
+  post<T>(endpoint: string, body: unknown) {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    })
   }
 }
 

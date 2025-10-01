@@ -10,76 +10,62 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel, 
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import MenuDots from '@/assets/menu-dots.svg?react';
+
+import { usePaymentContext } from '../../providers/usePaymentContext';
+
 import styles from './paymentsTable.module.css'
 
-const TABLE_MOCK = [
-  {
-    id: 1,
-    title: 'Netflix Subscription',
-    amount: 15.99,
-    currency: 'USD',
-    frequency: 'Monthly',
-    nextDate: '2025-06-01',
-    notes: 'Premium plan'
-  },
-  {
-    id: 2,
-    title: 'Rent Payment',
-    amount: 1200.0,
-    currency: 'EUR',
-    frequency: 'Monthly',
-    nextDate: '2025-06-05',
-    notes: 'Apartment rent'
-  },
-  {
-    id: 3,
-    title: 'Gym Membership',
-    amount: 40.0,
-    currency: 'GBP',
-    frequency: 'Monthly',
-    nextDate: '2025-06-15',
-    notes: null
-  },
-  {
-    id: 4,
-    title: 'Spotify Family',
-    amount: 14.99,
-    currency: 'USD',
-    frequency: 'Monthly',
-    nextDate: '2025-06-20',
-    notes: null
-  },
-  {
-    id: 5,
-    title: 'Car Insurance',
-    amount: 600.0,
-    currency: 'AUD',
-    frequency: 'Annually',
-    nextDate: '2025-07-01',
-    notes: 'Full coverage'
-  }
-]
 
 export const PaymentsTable = () => {
+  const {payments, loading} = usePaymentContext();
+  if (loading) {
+   return <div>loading...</div>
+  }
+
   return (
     <div>
       <div className={styles.table}>
         <Table>
           <TableHeader>
-            <TableHead>Title</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Frequency</TableHead>
-            <TableHead>Next Date</TableHead>
-            <TableHead>Notes</TableHead>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Frequency</TableHead>
+              <TableHead>Payment Date</TableHead>
+              <TableHead>Notes</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
-            {TABLE_MOCK.map((payment) => (
+            {payments.map((payment) => (
               <TableRow key={payment.id}>
                 <TableCell className="font-medium">{payment.title}</TableCell>
-                <TableCell className="font-medium">{`${payment.amount}/${payment.currency}`}</TableCell>
-                <TableCell className="font-medium">{payment.frequency}</TableCell>
-                <TableCell className="font-medium">{payment.nextDate}</TableCell>
+                <TableCell className="font-medium">{`${payment.amount.value} ${payment.amount.currency}`}</TableCell>
+                <TableCell className="font-medium">{payment.amount.frequency}</TableCell>
+                <TableCell className="font-medium">
+                  {payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString("en-GB") : ""}
+                </TableCell>
                 <TableCell className="font-medium">{payment.notes}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild><Button variant='ghost'><MenuDots/></Button></DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

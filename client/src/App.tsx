@@ -5,6 +5,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { Layout } from './components/layout/layout';
 import { DashboardLayout } from './components/layout/dashboardLayout/DashboardLayout';
 import { AuthLayout } from './components/layout/authLayout/AuthLayout';
+import { PaymentProvider } from './providers/PaymentsProvider';
 
 function App() {
   return (
@@ -26,7 +27,9 @@ function App() {
       <Route path="/dashboard" element={
         <Layout> 
           <DashboardLayout>
-            <DashboardPage />
+            <PaymentProvider>
+              <DashboardPage />
+            </PaymentProvider>
           </DashboardLayout>
         </Layout>
       } />

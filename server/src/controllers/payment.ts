@@ -79,13 +79,11 @@ paymentRouter.post('/', validate(paymentShema), async (req, res) => {
     })
     const newPayment = await payment.save();
     res.status(201).json({
-      payment: {
-        id: newPayment._id,
-        title: newPayment.title,
-        amount: newPayment.amount,
-        paymentDate: newPayment.paymentDate,
-        notes: newPayment.notes,
-      }
+      id: newPayment._id,
+      title: newPayment.title,
+      amount: newPayment.amount,
+      paymentDate: newPayment.paymentDate,
+      notes: newPayment.notes,
     })
   } catch (error) { 
     console.log(error);
