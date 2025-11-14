@@ -1,7 +1,7 @@
 import {api} from './api';
 
-import type { PaymentResponse } from '../types/api';
-import type { Payment, NewPayment } from '../types/payment';
+import type { PaymentResponse, DeletePaymentResponse } from '../types/api';
+import type { Payment, PaymentData } from '../types/payment';
 
 
 export const paymentService = {
@@ -9,7 +9,13 @@ export const paymentService = {
   getPayments: (): Promise<PaymentResponse> => {
     return api.get('/payments');
   },
- createPayment: (paymentData: NewPayment): Promise<Payment> => {
+ createPayment: (paymentData: PaymentData): Promise<Payment> => {
     return api.post('/payments', paymentData);
+  },
+  deletePayment: (paymentId: string): Promise<DeletePaymentResponse> =>  {
+    return api.delete(`/payments/${paymentId}`)
+  },
+  updatePayment: (paymentData: Payment): Promise<Payment> => {
+    return api.patch(`/payments/${paymentData.id}`, paymentData);
   }
 }

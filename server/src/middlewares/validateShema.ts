@@ -1,7 +1,7 @@
 import { ZodSchema } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 
-export const validate = (shema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
+export const validateShema = (shema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
   const result = shema.safeParse(req.body);
   if (!result.success) {
     const errors = result.error.errors.map((err)=> {

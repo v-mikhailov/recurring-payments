@@ -2,81 +2,90 @@ import bcrypt from 'bcrypt';
 import { Router } from 'express';
 import { UserModel } from '../models/user';
 import { SALT_ROUNDS } from '../utils/constants';
-import { validate } from '../middlewares/validate';
+import { validateShema } from '../middlewares/validateShema';
 import {registerShema, loginShema} from '../shemas/auth.shema';
 import { signToken } from '../utils/token';
 export const authRouter = Router();
 
 
-authRouter.post('/register', validate(registerShema), async (req, res) => {
+authRouter.post('/register', validateShema(registerShema), async (req, res) => {
   try {
-    const {email, login, password} = req.body;
+   const email = req.body.email ? String(req.body.email).trim().toLowerCase(): undefined;
+   const login = String(req.body.login).trim();
+   const password = String(req.body.password);
 
-    const existingByEmail = await UserModel.findOne({email: email});
+  const conflictQuery = email 
+    ? { $or: [{ email }, { login }] }
+    : { login };
+  console.log('conflictQuery', conflictQuery);
+  const conflicts = await UserModel.findOne(conflictQuery)
+    .select('email login')
+    .lean();
 
-    // TODO if both Email and login are used send both errors not the first one
-    if (existingByEmail) {
-      res.status(409).json({ error: 'Email is already in use' });
-      return;
-    }
+  const errors: Record<string, string> = {};
 
-    const existingByLogin = await UserModel.findOne({login: login});
-
-    if (existingByLogin) {
-      res.status(409).json({ error: 'Login is already in use' });
-      return
-    }
-  
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = new UserModel({
-      login,
-      email,
-      password: passwordHash,
-    })
-
-    const newUser = await user.save();
-  
-    res.status(201).json({ 
-      user: {
-        id: newUser._id,
-        login: newUser.login,
-        email: newUser.email,
-      }
-    });
-
-  } catch (error) { 
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+  if (conflicts) {
+    if (email && conflicts.email === email) errors.email = 'Email is already in use';
+    if (conflicts.login === login) errors.login = 'Login is already in use';
   }
-});
 
+  if (Object.keys(errors).length > 0) {
+    res.status(409).json({ errors });
+    return;
+  }
 
-authRouter.post('/login', validate(loginShema), async (req, res) => {
-  const { login, password } = req.body;
-  try {
-    const user = await UserModel.findOne({ login });
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    if (!user) {
-      res.status(401).json({ error: 'User not found' });
-      return;
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+  const user = new UserModel({
+    login,
+    password: passwordHash,
+    ...(email && { email }),
+  });
 
-    if (!isPasswordValid) {
-      res.status(401).json({ error: 'Invalid password' });
-      return;
-    }
+  const newUser = await user.save();
+  const token = signToken({userId: String(newUser._id), login: newUser.login});
 
-    const token = signToken({userId: user.id, login: user.login});
-    res.json({ user: {
-      login: user.login,
-      email: user.email,
-    },token })
-
+  res.status(201).json({ 
+    user: {
+      id: newUser._id,
+      login: newUser.login,
+      ...(newUser.email && { email: newUser.email }),
+    },
+    token
+  });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
-   
-  res.send('pong')
+})
+
+authRouter.post('/login', validateShema(loginShema), async (req, res) => {
+  try {
+    const login = String(req.body.login).trim();
+    const password = String(req.body.password);
+    const user = await UserModel.findOne({ login }).select('login email password');
+
+    if (!user) {
+      res.status(401).json({error: 'Invalid credentials'});
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({error: 'Invalid credentials'});
+      return;
+    }
+    
+    const token = signToken({userId: String(user._id), login: user.login});
+    res.status(200).json({
+      user: {
+        login: user.login,
+        ...(user.email && { email: user.email }), 
+      },
+      token
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 })

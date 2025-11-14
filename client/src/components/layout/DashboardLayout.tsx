@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
-import styles from './dashboardLayout.module.css';
 
 interface DashboardLayout {
   children: ReactNode;
 }
 
+
 export const DashboardLayout = ({ children }: DashboardLayout) => {
   return (
-    <div className={styles.container}>
+    <div data-tid="dashboard-layout" className='max-w-7xl ml-auto mr-auto pt-4'>
       {children}
     </div>
   );

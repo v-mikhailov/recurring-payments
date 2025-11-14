@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { paymentService } from "../services/payments"
 import { ApiError } from "../services/api"
 
-import type { Payment, NewPayment } from "../types/payment"
+import type { Payment, PaymentData } from "../types/payment"
 
 interface UsePaymentsOptions {
   autoLoad?: boolean;
@@ -17,8 +17,9 @@ interface UsePaymentsReturn {
   payments: Payment[];
   loading: boolean;
   error: string | null;
-  createPayment: (data: NewPayment) => Promise<void>;
+  createPayment: (data: PaymentData) => Promise<void>;
   loadPayments: () => Promise<void>;
+  deletePayment: (paymentId: string) => Promise<void>;
 }
 
 
@@ -50,7 +51,7 @@ export const usePayments = ({options}: UsePaymentsProps): UsePaymentsReturn => {
     }
   }, []);
 
-  const createPayment = useCallback(async (payment: NewPayment) => {
+  const createPayment = useCallback(async (payment: PaymentData) => {
     setLoading(true);
     setError(null);
 
@@ -71,13 +72,29 @@ export const usePayments = ({options}: UsePaymentsProps): UsePaymentsReturn => {
     }
   }, [])
 
+  const deletePayment = useCallback(async (paymentId: string) => {
+    setError(null);
+
+    try {
+      await paymentService.deletePayment(paymentId);
+      setPayments(prev => prev.filter(payment => payment.id !== paymentId));
+      setError(null);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Failed to delete payment');
+      }
+      throw (err instanceof Error ? err : new Error('Failed to delete paymen'));
+    }
+  }, [])
+  
+
   useEffect(() => {
     if (autoLoad) {
       loadPayments();
     }
   }, [autoLoad, loadPayments]);
-
-
 
   return {
     payments,
@@ -85,5 +102,6 @@ export const usePayments = ({options}: UsePaymentsProps): UsePaymentsReturn => {
     error,
     createPayment,
     loadPayments,
+    deletePayment
   }
 }

@@ -1,40 +1,42 @@
-
+import { usePaymentContext } from '../../providers/usePaymentContext';
+import { Ellipsis } from 'lucide-react';
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-
+  TableFooter,
+} from "@/components/ui/table";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel, 
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import MenuDots from '@/assets/menu-dots.svg?react';
-
-import { usePaymentContext } from '../../providers/usePaymentContext';
-
-import styles from './paymentsTable.module.css'
-
+import { EditPaymentModal } from './EditPaymentModal';
 
 export const PaymentsTable = () => {
-  const {payments, loading} = usePaymentContext();
+  const {payments, deletePayment, loading} = usePaymentContext();
   if (loading) {
    return <div>loading...</div>
   }
 
+  const onDeleteClick = async (paymentId: string) => {
+    try {
+      await deletePayment(paymentId);
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  }
+
   return (
     <div>
-      <div className={styles.table}>
+      <div className='shadow-sm bg-white p-6 rounded-lg'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -43,7 +45,7 @@ export const PaymentsTable = () => {
               <TableHead>Frequency</TableHead>
               <TableHead>Payment Date</TableHead>
               <TableHead>Notes</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -58,11 +60,17 @@ export const PaymentsTable = () => {
                 <TableCell className="font-medium">{payment.notes}</TableCell>
                 <TableCell>
                   <DropdownMenu>
-                      <DropdownMenuTrigger asChild><Button variant='ghost'><MenuDots/></Button></DropdownMenuTrigger>
+                      <DropdownMenuTrigger asChild><Button variant='ghost'><Ellipsis/></Button></DropdownMenuTrigger>
                       <DropdownMenuContent>
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <EditPaymentModal
+                                payment={payment}
+                                trigger={<span className="inline-block w-full">Edit</span>}
+                              />
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDeleteClick(payment.id)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -71,13 +79,13 @@ export const PaymentsTable = () => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={4}>Total</TableCell>
+              <TableCell colSpan={5}>Total</TableCell>
               <TableCell>2500 USD</TableCell>
             </TableRow>
         </TableFooter>
         </Table>
       </div>
-      <div className={styles['bttn-container']}><Button className={styles['load-more-bttn']} variant="outline">Load more</Button></div>
+      <div className="mt-7 shadow-lg rounded-lg"><Button className='w-full p-4.5 bg-white' variant="outline">Load more</Button></div>
     </div>
   );
 }

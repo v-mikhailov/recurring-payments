@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { LoginForm } from '../components/forms/loginForm/LoginForm';
+import { LoginForm } from '../components/forms/LoginForm';
 import { Link } from 'react-router-dom';
-
-import styles from './loginPage.module.css';
 
 export const LoginPage = () => {
 
@@ -16,24 +14,24 @@ export const LoginPage = () => {
   }, []) 
 
   return (
-    <section className={styles.container}>
-      <header className={styles.header}>
-        <h1>PayTrack</h1>
-        <p className={styles.subtitle}>
+    <section className='flex flex-col gap gap-y-[30px]'>
+      <header className='flex flex-col items-center gap-y-[8px]'>
+        <h1 className='text-4xl'>PayTrack</h1>
+        <p className='text-center'>
           Log in to manage your recurring payments effortlessly. This section provides access to your personalized payment dashboard.
         </p>
       </header>
-      <div className={styles.form}> 
+      <div> 
         <LoginForm />
       </div>
-      <footer className={styles.links}>
+      <footer className='flex flex-col items-center gap-y-[8px]'>
         <p>Don't have an account? {' '}
-          <Link to="/auth/register">
+          <Link to="/auth/register" className='text-indigo-500 hover:text-indigo-700'>
             Sign Up
           </Link>
         </p>
         <p> Temporary access without registration {' '}
-          <Link to="/dashboard">
+          <Link to="/dashboard" className='text-indigo-500 hover:text-indigo-700'>
             Go to Dashboard
           </Link>
         </p>

@@ -3,14 +3,14 @@ import mongoose, { Schema, Document } from 'mongoose';
 interface IUser extends Document {
   login: string;
   password: string;
-  email: string;
+  email?: string;
   createdAt: Date;
 }
 
 const userShema = new Schema<IUser>({
   login: {
     type: String,
-    unnique: true,
+    unique: true,
     required: true,
     trim: true,
     minLength: 4
@@ -22,7 +22,6 @@ const userShema = new Schema<IUser>({
   },
   email:{
     type: String,
-    unique: true,
     trim: true,
     lowercase: true,
   },
@@ -31,5 +30,10 @@ const userShema = new Schema<IUser>({
     default: Date.now,
   },
 })
+
+userShema.index({ email: 1 }, { 
+  unique: true, 
+  partialFilterExpression: { email: { $exists: true, $ne: null } }
+});
 
 export const UserModel = mongoose.model<IUser>('User', userShema);

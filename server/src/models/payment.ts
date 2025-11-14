@@ -1,7 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-// пока делаем без userID
-
 interface IPayment extends Document {
   title: string;
   amount: {
@@ -11,13 +9,13 @@ interface IPayment extends Document {
   };
   paymentDate: Date;
   notes?: string;
+  userId: mongoose.Types.ObjectId;
 }
 
 const PaymentSchema = new Schema<IPayment>({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   amount: {
     value: {type: Number, required: true},
@@ -32,7 +30,7 @@ const PaymentSchema = new Schema<IPayment>({
       enum: ['day', 'week', 'month', 'year'],
     },
   },
-    paymentDate: {
+  paymentDate: {
     type: Date,
     required: true,
     default: Date.now,
@@ -40,6 +38,11 @@ const PaymentSchema = new Schema<IPayment>({
   notes: {
     type: String,
     trim: true,
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   }
 }, {
   toJSON: {

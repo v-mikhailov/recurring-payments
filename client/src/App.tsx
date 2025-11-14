@@ -3,8 +3,8 @@ import { RegisterPage } from './pages/RegisterPage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { Layout } from './components/layout/layout';
-import { DashboardLayout } from './components/layout/dashboardLayout/DashboardLayout';
-import { AuthLayout } from './components/layout/authLayout/AuthLayout';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { AuthLayout } from './components/layout/AuthLayout';
 import { PaymentProvider } from './providers/PaymentsProvider';
 
 function App() {

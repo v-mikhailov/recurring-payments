@@ -1,3 +1,4 @@
+import type {Payment, PaymentData} from '@/types/payment';
 export class ApiError extends Error {
   public status: number;
   public data?: unknown;
@@ -56,9 +57,22 @@ class ApiService {
     return this.request<T>(url);
   }
 
-  post<T>(endpoint: string, body: unknown) {
+  post<T>(endpoint: string, body: PaymentData) {
     return this.request<T>(endpoint, {
       method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    })
+  }
+
+  delete<T>(endpoint: string) {
+    return this.request<T>(endpoint, {
+      method: 'DELETE',
+    })
+  }
+
+  patch<T>(endpoint: string, body: Payment) {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     })
   }
