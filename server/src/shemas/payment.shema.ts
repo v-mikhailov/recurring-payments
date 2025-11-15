@@ -10,3 +10,6 @@ export const paymentShema = z.object({
   paymentDate: z.coerce.date().optional(),
   notes: z.string().optional()
 }).strict();
+
+
+export const updatePaymentSchema = paymentShema.partial().strict();

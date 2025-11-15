@@ -5,6 +5,7 @@ import { SALT_ROUNDS } from '../utils/constants';
 import { validateShema } from '../middlewares/validateShema';
 import {registerShema, loginShema} from '../shemas/auth.shema';
 import { signToken } from '../utils/token';
+import { sendError, ErrorTypes } from '../utils/appErrors';
 export const authRouter = Router();
 
 
@@ -17,7 +18,7 @@ authRouter.post('/register', validateShema(registerShema), async (req, res) => {
   const conflictQuery = email 
     ? { $or: [{ email }, { login }] }
     : { login };
-  console.log('conflictQuery', conflictQuery);
+  
   const conflicts = await UserModel.findOne(conflictQuery)
     .select('email login')
     .lean();
@@ -30,8 +31,8 @@ authRouter.post('/register', validateShema(registerShema), async (req, res) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    res.status(409).json({ errors });
-    return;
+    sendError(res, ErrorTypes.CONFLICT(errors));
+    return ;
   }
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -54,8 +55,7 @@ authRouter.post('/register', validateShema(registerShema), async (req, res) => {
     token
   });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 })
 
@@ -66,13 +66,13 @@ authRouter.post('/login', validateShema(loginShema), async (req, res) => {
     const user = await UserModel.findOne({ login }).select('login email password');
 
     if (!user) {
-      res.status(401).json({error: 'Invalid credentials'});
+      sendError(res, ErrorTypes.UNAUTHORIZED());
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({error: 'Invalid credentials'});
+      sendError(res, ErrorTypes.UNAUTHORIZED());
       return;
     }
     
@@ -85,7 +85,6 @@ authRouter.post('/login', validateShema(loginShema), async (req, res) => {
       token
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 })

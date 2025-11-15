@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { paymentShema } from '../shemas/payment.shema';
+import { paymentShema, updatePaymentSchema } from '../shemas/payment.shema';
 import { validateShema} from '../middlewares/validateShema';
 import {authenticate} from '../middlewares/authenticate';
 import { PaymentModel } from '../models/payment';
+import { sendError, ErrorTypes } from '../utils/appErrors';
 
 export const paymentRouter = Router();
 paymentRouter.use(authenticate)
@@ -17,8 +18,7 @@ paymentRouter.get('/', async (req, res) => {
       count: payments.length,
     })
   } catch (error) { 
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 })
 
@@ -30,14 +30,13 @@ paymentRouter.get('/:id', async (req, res) => {
     const payment = await PaymentModel.findOne({ _id: id, userId });
 
     if (!payment) {
-      res.status(404).json({ error: 'Payment not found' });
+      sendError(res, ErrorTypes.NOT_FOUND());
       return;
     }
 
     res.status(200).json({ payment });
   } catch (error) { 
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 });
 
@@ -49,18 +48,18 @@ paymentRouter.delete('/:id', async (req, res) => {
     const payment = await PaymentModel.findOneAndDelete({ _id: id, userId });
        
     if (!payment) {
-      res.status(404).json({ error: 'Payment not found' });
+      sendError(res, ErrorTypes.NOT_FOUND());
       return;
     }
 
     res.status(200).json({ message: 'Payment deleted successfully' });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   };
 });
 
-paymentRouter.patch('/:id', async (req, res) => {
+// update payment
+paymentRouter.patch('/:id', validateShema(updatePaymentSchema), async (req, res) => {
   const { id } = req.params;
   try {
     const userId = req.user!.userId;
@@ -81,7 +80,7 @@ paymentRouter.patch('/:id', async (req, res) => {
     );
 
     if (!payment) {
-      res.status(404).json({ error: 'Payment not found' });
+      sendError(res, ErrorTypes.NOT_FOUND());
       return;
     }
 
@@ -93,18 +92,16 @@ paymentRouter.patch('/:id', async (req, res) => {
       notes: payment.notes,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 });
 
-// post payment
+// create payment
 paymentRouter.post('/', validateShema(paymentShema), async (req, res) => {
   try {
     const userId = req.user!.userId;
     const {title, amount, paymentDate, notes } = req.body;
     const processedNotes = notes && notes.trim() !== '' ? notes.trim() : undefined;
-    // добавить usedID потом
     const newPayment = await PaymentModel.create({
       title,
       amount,
@@ -121,7 +118,6 @@ paymentRouter.post('/', validateShema(paymentShema), async (req, res) => {
       notes: newPayment.notes,
     })
   } catch (error) { 
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, error);
   }
 })

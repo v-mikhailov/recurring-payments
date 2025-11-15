@@ -6,6 +6,11 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_EXPIRES_IN = '24h';
 
+if (!JWT_SECRET) {
+  console.error('JWT_SECRET environment variable is required');
+  process.exit(1);
+}
+
 export interface UserPayload {
   userId: string;
   login: string;
