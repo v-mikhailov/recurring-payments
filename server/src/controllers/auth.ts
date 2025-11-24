@@ -48,7 +48,6 @@ authRouter.post('/register', validateShema(registerShema), async (req, res) => {
 
   res.status(201).json({ 
     user: {
-      id: newUser._id,
       login: newUser.login,
       ...(newUser.email && { email: newUser.email }),
     },

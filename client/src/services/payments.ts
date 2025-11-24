@@ -5,17 +5,16 @@ import type { Payment, PaymentData } from '../types/payment';
 
 
 export const paymentService = {
-  // добавить пагинацию
   getPayments: (): Promise<PaymentResponse> => {
-    return api.get('/payments');
+    return api.get<PaymentResponse>('/payments');
   },
  createPayment: (paymentData: PaymentData): Promise<Payment> => {
-    return api.post('/payments', paymentData);
+    return api.post<Payment, PaymentData>('/payments', paymentData);
   },
   deletePayment: (paymentId: string): Promise<DeletePaymentResponse> =>  {
-    return api.delete(`/payments/${paymentId}`)
+    return api.delete<DeletePaymentResponse>(`/payments/${paymentId}`)
   },
   updatePayment: (paymentData: Payment): Promise<Payment> => {
-    return api.patch(`/payments/${paymentData.id}`, paymentData);
+    return api.patch<Payment, Payment>(`/payments/${paymentData.id}`, paymentData);
   }
 }

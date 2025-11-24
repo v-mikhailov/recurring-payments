@@ -1,4 +1,4 @@
-import { usePaymentContext } from '../../providers/usePaymentContext';
+import { usePaymentContext } from '@/providers/payment/usePaymentContext';
 import { Ellipsis } from 'lucide-react';
 import {
   Table,

@@ -1,13 +1,10 @@
-import type { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
 
-interface LayoutProps {
-  children: ReactNode;
-}
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = () => {
   return (
     <main className='w-full min-h-screen bg-[#F8F8F8]'>
-      {children}
+      <Outlet />
     </main>
   );
 };

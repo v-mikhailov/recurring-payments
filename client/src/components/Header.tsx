@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +9,16 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { PaymentForm } from "@/components/forms/PaymentForm";
+import { useAuthContext } from "@/providers/auth/useAuthContext";
+import { usePaymentContext } from '@/providers/payment/usePaymentContext';
 
-import { usePaymentContext } from '@/providers/usePaymentContext';
 import type { PaymentData } from '@/types/payment';
 
 
 export const Header = () => {
-   const {createPayment, loading, error} = usePaymentContext();
+  const {createPayment, loading, error} = usePaymentContext();
+  const navigate = useNavigate();
+  const { logout } = useAuthContext();
 
   const handleSubmit = async (formData: PaymentData) => {
     try {
@@ -24,6 +28,11 @@ export const Header = () => {
       console.error('Failed to create payment:', err);
     }
 
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   }
 
   return (
@@ -44,7 +53,7 @@ export const Header = () => {
               <PaymentForm onSubmit={handleSubmit}/>
           </DialogContent>
         </Dialog>
-        <span> Logout</span>
+        <Button onClick={handleLogout}>Logout</Button>
       </div>
 
     </header>

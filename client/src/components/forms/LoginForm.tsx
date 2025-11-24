@@ -1,49 +1,58 @@
-import { useId, useState} from 'react';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export const LoginForm = () => {
-  const formId = useId();
-  const [formValues, setFormValues] = useState({
-    email: '',
+  const { login, loading, error } = useAuth();
+  const [formState, setFormState] = useState({
+    login: '',
     password: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({
+    setFormState((prev) => ({
       ...prev,
       [name]: value,
     }));
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    await login(formState);
   };
 
   return (
     <form  onSubmit={handleSubmit} className='flex flex-col gap-y-[24px]'>
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm border border-red-200">
+          {error}
+        </div>
+      )}
       <div data-tid="form-group" className='flex flex-col justify-start gap-y-[5px] mb-[10px] last:mb-0'>
-        <label htmlFor={`${formId}-login`}>Username:</label>
+        <label htmlFor='login'>Username:</label>
         <input 
-          id={`${formId}-login`} 
-          value={formValues.email}
-          name="email"
+          id='login'
+          value={formState.login}
+          name="login"
           type="text"
           onChange={handleChange}
+          disabled={loading}
           data-tid="input"
-          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3'
+          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3 disabled:opacity-50'
+          required
         />
       </div>
       <div data-tid="form-group" className='flex flex-col justify-start gap-y-[5px] mb-[10px] last:mb-0'>
-        <label htmlFor={`${formId}-password`}>Password:</label>
+        <label htmlFor='passwor'>Password:</label>
         <input 
-          id={`${formId}-password`} 
+          id='password'
           name="password"
           type="password"
-          value={formValues.password}
+          value={formState.password}
           onChange={handleChange}
           data-tid="input"
-          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3'
+          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3 disabled:opacity-50'
+          required
         />
       </div>
       <button 
@@ -63,8 +72,9 @@ export const LoginForm = () => {
           rounded
         "
         type="submit"
+        disabled={loading}
       >
-        Login
+       {loading ? 'Logging in...' : 'Login'}
       </button>
     </form>
   )

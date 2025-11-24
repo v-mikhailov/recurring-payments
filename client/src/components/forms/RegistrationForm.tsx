@@ -1,59 +1,86 @@
-import { useId, useState} from 'react';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export const RegistrationForm = () => {
-  const formId = useId();
-  const [formValues, setFormValues] = useState({
-    email: '',
+  const { register, loading, error } = useAuth();
+
+  const [formState, setFormState] = useState({
+    login: '',
     password: '',
     confirmPassword: '',
   });
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({
+    setFormState((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (validationError) setValidationError(null);
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (formState.password !== formState.confirmPassword) {
+      setValidationError('Passwords do not match');
+      return;
+    }
+
+    await register({
+      login: formState.login,
+      password: formState.password,
+    });
   };
 
   return (
     <form className="flex flex-col gap-y-[24px]" onSubmit={handleSubmit}>
+      {(error || validationError) && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm border border-red-200">
+          {validationError || error}
+        </div>
+      )}
+
       <div className='flex flex-col justify-start gap-y-[5px] mb-2.5 last:mb-0'>
-        <label htmlFor={`${formId}-email`}>Username:</label>
+        <label htmlFor='login'>Username:</label>
         <input 
-          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3'
-          id={`${formId}-login`} 
-          value={formValues.email}
-          name="email"
+          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3 disabled:opacity-50'
+          id='login' 
+          value={formState.login}
+          name="login"
           type="text"
           onChange={handleChange}
+          disabled={loading}
+          required
         />
       </div>
       <div className='flex flex-col justify-start gap-y-[5px] mb-2.5 last:mb-0'>
-        <label htmlFor={`${formId}-pasword`}>Password:</label>
+        <label htmlFor='pasword'>Password:</label>
         <input 
-          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3'
-          id={`${formId}-password`} 
+          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3 disabled:opacity-50'
+          id='password' 
           name="password"
           type="password"
-          value={formValues.password}
+          value={formState.password}
           onChange={handleChange}
+          disabled={loading}
+          required
         />
       </div>
       <div className='flex flex-col justify-start gap-y-[5px] mb-2.5 last:mb-0'>
-        <label htmlFor={`${formId}-pasword`}>Confirm password:</label>
+        <label htmlFor='confirmPassword'>Confirm password:</label>
         <input
-          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3'
-          id={`${formId}-confirm-password`} 
-          name="confirm password"
+          className='h-10 border border-slate-200 rounded-sm py-2.5 px-3 disabled:opacity-50'
+          id='confirmPassword'
+          name="confirmPassword"
           type="password"
-          value={formValues.confirmPassword}
+          value={formState.confirmPassword}
           onChange={handleChange}
+          disabled={loading}
+          required
         />
       </div>
       <button 
@@ -73,7 +100,7 @@ export const RegistrationForm = () => {
         rounded
        "
       >
-        Register
+        {loading ? 'Registering...' : 'Register'}
       </button>
     </form>
   )

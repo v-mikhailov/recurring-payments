@@ -15,6 +15,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+.github/
 
 # === NODE / MONOREPO ===
 node_modules/

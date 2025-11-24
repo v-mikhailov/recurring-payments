@@ -1,9 +1,7 @@
 
 import type { ReactNode } from 'react';
-import { usePayments } from '../hooks/usePayments';
+import { usePayments } from '../../hooks/usePayments';
 import { PaymentsContext } from './PaymentContext';
-
-
 
 interface PaymentsProviderProps {
   children: ReactNode;

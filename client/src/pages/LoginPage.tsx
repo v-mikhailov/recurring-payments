@@ -1,17 +1,7 @@
-import { useState, useEffect } from 'react';
 import { LoginForm } from '../components/forms/LoginForm';
 import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
-
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('api/v1/ping')
-    .then((res) => res.json())
-    .then((data) => setMessage(data.message))
-    .catch((error) => console.error('Error fetching message:', error));
-  }, []) 
 
   return (
     <section className='flex flex-col gap gap-y-[30px]'>
@@ -30,12 +20,6 @@ export const LoginPage = () => {
             Sign Up
           </Link>
         </p>
-        <p> Temporary access without registration {' '}
-          <Link to="/dashboard" className='text-indigo-500 hover:text-indigo-700'>
-            Go to Dashboard
-          </Link>
-        </p>
-        <p>Message from the backend: {message}</p>
       </footer>
     </section>
   )
